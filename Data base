@@ -1,4 +1,3 @@
-package com.tudominio.doloreshidalgoturismo.data.database
 
 import android.content.Context
 import androidx.room.Database
