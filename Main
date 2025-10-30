@@ -1,0 +1,27 @@
+package com.lavj.doloreshidalgoturismo
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.tudominio.doloreshidalgoturismo.data.database.AppDatabase
+import com.tudominio.doloreshidalgoturismo.data.repository.PlaceRepository
+import com.tudominio.doloreshidalgoturismo.ui.screens.MapScreen
+import com.tudominio.doloreshidalgoturismo.ui.viewmodel.MapViewModel
+import com.tudominio.doloreshidalgoturismo.ui.viewmodel.MapViewModelFactory
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
+        val database = AppDatabase.getDatabase(applicationContext)
+        val repository = PlaceRepository(database.placeDao())
+
+        setContent {
+            val viewModel: MapViewModel = viewModel(factory = MapViewModelFactory(repository))
+            MapScreen(viewModel)
+        }
+    }
+}
