@@ -1,0 +1,53 @@
+package com.tudominio.doloreshidalgoturismo.ui.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
+import com.tudominio.doloreshidalgoturismo.data.model.PlaceEntity
+import com.tudominio.doloreshidalgoturismo.data.repository.PlaceRepository
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+
+class MapViewModel(private val repository: PlaceRepository) : ViewModel() {
+    val places = repository.allPlaces.stateIn(
+        viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList()
+    )
+
+    private val _showDialog = MutableStateFlow(false)
+    val showDialog = _showDialog.asStateFlow()
+
+    private var tempLatLng: LatLng? = null
+
+    init {
+        viewModelScope.launch {
+            if (places.first().isEmpty()) repository.insertDefaultPlaces()
+        }
+    }
+
+    fun onMapLongClick(latLng: LatLng) {
+        tempLatLng = latLng
+        _showDialog.value = true
+    }
+
+    fun addPlace(name: String, desc: String, category: String) {
+        viewModelScope.launch {
+            tempLatLng?.let {
+                repository.insertPlace(
+                    PlaceEntity(
+                        name = name,
+                        description = desc,
+                        latitude = it.latitude,
+                        longitude = it.longitude,
+                        category = category,
+                        markerColor = "#FF0000"
+                    )
+                )
+            }
+            _showDialog.value = false
+        }
+    }
+
+    fun dismissDialog() {
+        _showDialog.value = false
+    }
+}
