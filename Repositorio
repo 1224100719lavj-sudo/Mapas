@@ -1,0 +1,21 @@
+package com.tudominio.doloreshidalgoturismo.data.repository
+
+import com.tudominio.doloreshidalgoturismo.data.dao.PlaceDao
+import com.tudominio.doloreshidalgoturismo.data.model.PlaceEntity
+import kotlinx.coroutines.flow.Flow
+
+class PlaceRepository(private val placeDao: PlaceDao) {
+    val allPlaces: Flow<List<PlaceEntity>> = placeDao.getAllPlaces()
+    suspend fun insertPlace(place: PlaceEntity) = placeDao.insertPlace(place)
+    suspend fun updatePlace(place: PlaceEntity) = placeDao.updatePlace(place)
+    suspend fun deletePlace(place: PlaceEntity) = placeDao.deletePlace(place)
+
+    suspend fun insertDefaultPlaces() {
+        val defaultPlaces = listOf(
+            PlaceEntity("Parroquia de Nuestra Señora de los Dolores", "Templo emblemático", 21.1558, -100.9314, "Iglesia", "#FF6B35"),
+            PlaceEntity("Casa de Don Miguel Hidalgo", "Museo histórico", 21.1565, -100.9320, "Museo", "#4ECDC4"),
+            PlaceEntity("Plaza Principal", "Centro histórico", 21.1560, -100.9318, "Plaza", "#95E1D3")
+        )
+        defaultPlaces.forEach { placeDao.insertPlace(it) }
+    }
+}
