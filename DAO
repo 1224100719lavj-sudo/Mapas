@@ -1,4 +1,4 @@
-package com.tudominio.doloreshidalgoturismo.data.dao
+
 
 import androidx.room.*
 import com.tudominio.doloreshidalgoturismo.data.model.PlaceEntity
