@@ -1,0 +1,47 @@
+package com.lavj.doloreshidalgoturismo.ui.screens
+
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import com.google.android.gms.maps.model.*
+import com.google.maps.android.compose.*
+import com.tudominio.doloreshidalgoturismo.data.model.PlaceEntity
+import com.tudominio.doloreshidalgoturismo.ui.viewmodel.MapViewModel
+import com.tudominio.doloreshidalgoturismo.ui.components.PlaceDialog
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MapScreen(viewModel: MapViewModel) {
+    val places by viewModel.places.collectAsState()
+    val showDialog by viewModel.showDialog.collectAsState()
+
+    val cameraPosition = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(21.1561, -100.9315), 15f)
+    }
+
+    Scaffold { padding ->
+        Box(modifier = Modifier.fillMaxSize()) {
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPosition,
+                onMapLongClick = { viewModel.onMapLongClick(it) }
+            ) {
+                places.forEach { place ->
+                    Marker(
+                        state = MarkerState(LatLng(place.latitude, place.longitude)),
+                        title = place.name,
+                        snippet = place.description
+                    )
+                }
+            }
+
+            if (showDialog) {
+                PlaceDialog(
+                    onConfirm = { n, d, c -> viewModel.addPlace(n, d, c) },
+                    onDismiss = { viewModel.dismissDialog() }
+                )
+            }
+        }
+    }
+}
