@@ -1,4 +1,4 @@
-package com.tudominio.doloreshidalgoturismo.data.model
+package com.lavj.doloreshidalgoturismo.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
